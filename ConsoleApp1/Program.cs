@@ -6,10 +6,17 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    class Program
+    partial class Program
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Getting ready to work!");
+            if (ConnectToDB())
+            {
+                //Some code here
+                CloseConnectionToDB();
+            };
+            Pause();
         }
     }
 }
