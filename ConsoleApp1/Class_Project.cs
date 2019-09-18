@@ -27,12 +27,12 @@ namespace ConsoleApp1
             return Result;
         }
         //Конструктор
-        public Project(string DbName)
+        public Project()
         {
             ID = 0;
             Name = "";
             SQLstring = "";
-            DatabaseName = DbName;
+            //DatabaseName = DbName;
         }
     }
 }

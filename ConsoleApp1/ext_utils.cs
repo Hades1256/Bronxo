@@ -6,7 +6,7 @@ using System.IO;
 namespace ConsoleApp1
 {
     public enum Rights { eUser =1, eAdmin = 2 };
-    public class ext_utils       
+    public class ext_utils
     {
         public static bool IsValidFilename(string filename)
         {
