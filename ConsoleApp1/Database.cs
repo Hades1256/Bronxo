@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
 using System.Data.SQLite;
 using System.IO;
 
@@ -11,8 +12,16 @@ namespace ConsoleApp1
     class Database
     {
         private SQLiteConnection dbConnect;
-        private SQLiteCommand sqlCmd;
+        private SQLiteCommand dbCmd;
         public Boolean IsConnected { get; private set; }
+        public SQLiteDataReader ExecuteReader
+        {
+            get
+            {
+                return dbCmd.ExecuteReader();
+            }
+
+        }
         private void Connect()
         {
             Console.WriteLine(dbConnect.State);
@@ -53,35 +62,85 @@ namespace ConsoleApp1
         public int ExecuteCommand(String SQLcommand)
         {
             int Result = 0;
-            sqlCmd.CommandText = SQLcommand;
+            dbCmd.CommandText = SQLcommand;
             try
             {
-                Result = sqlCmd.ExecuteNonQuery();
+                Result = dbCmd.ExecuteNonQuery();
             }
             catch (SQLiteException ex)
             {
-                if (ex.ErrorCode==19) //ex.Message = "constraint failed\r\nUNIQUE constraint failed: Users.Name"
-                //if (ex.Message.Contains("UNIQUE constraint")) //ex.Message = "constraint failed\r\nUNIQUE constraint failed: Users.Name"
+
+                switch (ex.ErrorCode)
                 {
-                    new Master().WriteMessage(new String[] { "Non unique value inserted" });
+                    //case 1:                 //Message = "SQL logic error\r\ntable Projects has no column named Descr" ex.ErrorCode==1 ;Message = "SQL logic error\r\nnear \")\": syntax error"
+                    //break;
+                    case 19:                //Message = "constraint failed\r\nUNIQUE constraint failed: Users.Name" ex.ErrorCode==19
+                        new Master().WriteMessage(new String[] { "Non unique value inserted" });
+                        break;
+                    default:
+                        new Master().WriteMessage(new String[] { ex.Message });
+                        break;
+                }
+                if (ex.ErrorCode == 19)
+                {
+
                 }
             }
             //
             return Result;
+        }
+        private String ShowInputMaster(string colname)
+        {
+            String Result = "";
+            new Master().WriteMessage(true, new String[] { "Input parameter value, you wish to show the row of" });
+            Result = Console.ReadLine();
+            return Result;
+        }
+        public void printTable(String tblname, String colname, int TABLEWIDTH)
+        {
+
+            using (SQLiteDataReader dr = dbCmd.ExecuteReader())
+            {
+                if (dr.HasRows)
+                {
+                    String[] row = new String[dr.FieldCount];
+                    //чтение заголовка таблицы(имена столбцов)}
+                    for (Int32 i = 0; i < dr.FieldCount; i++)
+                    {
+                        row[i] = dr.GetName(i).ToString().Trim();
+                    }
+                    ext_utils.PrintRow(TABLEWIDTH, row);
+                    Int32 RowCounter = 0;
+                    while (dr.Read())
+                    {
+                        for (Int32 i = 0; i < dr.FieldCount; i++)
+                        {
+                            row[i] = dr.GetValue(i).ToString().Trim();
+                        }
+                        ext_utils.PrintRow(TABLEWIDTH, row);
+                        RowCounter++;
+                    }
+                    Console.WriteLine("Number of found rows: {0}", RowCounter);
+                }
+                else
+                {
+                    new Master().WriteMessage(new string[] { "The query did't give any results." });
+                }
+            }
         }
         //Конструктор
         public Database(String FileName)
         {
             IsConnected = false;
             dbConnect = new SQLiteConnection();
-            sqlCmd = new SQLiteCommand();
+            dbCmd = new SQLiteCommand();
             dbConnect.ConnectionString = "Data Source = " + FileName + "; Version = 3; FailIfMissing=True; Journal Mode=Persist;";
             if (File.Exists(FileName))
             {
                 try
                 {
                     Connect();
-                    sqlCmd.Connection = dbConnect;
+                    dbCmd.Connection = dbConnect;
                 }
                 catch (SQLiteException ex)
                 {

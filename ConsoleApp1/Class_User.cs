@@ -12,7 +12,7 @@ namespace ConsoleApp1
         private Byte AccessLevel=0;
         public String Name { get; set; }
         public String SQLstring { get; set; }
-        public Rights GetRights()
+        /*public Rights GetRights()
         {
             Rights Result = 0;
             switch (AccessLevel)
@@ -28,7 +28,7 @@ namespace ConsoleApp1
                     break;
             }
             return Result;
-        }
+        }*/
         public String AddMaster()//
         // Сводка:
         //     Возвращает SQL запрос.
@@ -45,6 +45,29 @@ namespace ConsoleApp1
             if (_master.Key == 'Y') Result = SQLAdd();
             return Result;
         }
+        public String ShowMaster(Boolean allFlag)//
+        // Сводка:
+        //     Возвращает SQL запрос.
+        //
+        // Возврат:
+        //     Строка типа String.
+        {
+            String Result = "";
+            if (allFlag)
+            {
+                Result = SQLShow(true);
+            }
+            else
+            {
+                Master _master = new Master();
+                Console.Clear();
+                Console.WriteLine("Write User name to show");
+                Name = Console.ReadLine();
+                _master.WriteMessage(new String[] { String.Format("You are about to show a user: {0} from Data Base.", Name), "Continue? (y/n)" }, new char[] { 'Y' });
+                if (_master.Key == 'Y') Result = SQLShow(Name);
+            }
+            return Result;
+        }
         public String SQLAdd()
         {
             //SQL запрос
@@ -52,7 +75,20 @@ namespace ConsoleApp1
             Result = String.Format("INSERT INTO Users (Name) VALUES('{0}'); ", Name);
             return Result;
         }
-
+        public static String SQLShow(Boolean AllFlag)
+        {
+            //SQL запрос
+            String Result = "";
+            Result = @"SELECT * FROM 'Users'; ";
+            return Result;
+        }
+        public static String SQLShow(String val)
+        {
+            //SQL запрос
+            String Result = "";
+            Result = String.Format(@"SELECT * FROM 'Users' WHERE Name LIKE '{0}'; ", val);
+            return Result;
+        }
         static void DeleteUser(String name)
         {
             //SQL запрос command.CommandText = String.Format(@"DELETE FROM 'users' WHERE ""Name"" = '{0}'; ",Name);

@@ -16,9 +16,9 @@ namespace ConsoleApp1
         {
 
             Console.WriteLine("Getting ready to work!");
-            string dbName = "Database.sqlite";
-            /*Console.WriteLine("Input the Data Base file name:");
-            string dbName = Console.ReadLine();*/
+            //string dbName = "Database.sqlite";
+            Console.WriteLine("Input the Data Base file name:");
+            string dbName = (Console.ReadLine()).Replace("\"", "");
             if (ext_utils.IsValidFilename(dbName))
             {
                 Console.WriteLine("Trying to connect to: " + Environment.CurrentDirectory + "\\" + dbName);
@@ -29,6 +29,25 @@ namespace ConsoleApp1
                 Console.WriteLine("Invalid File Name: "+ dbName+"\nName should be string without quotes with or without full path to file.\nProgram will be closed.");
                 ext_utils.Closeapp();
             }
+        }
+        static void printTable(String tblname, Boolean allFlag, int TABLEWIDTH)
+        {
+            //if (allFlag)
+            //{
+            //    User usr = new User();
+            //    usr.ShowMaster();
+            //    SQLite db.ExecuteReader;
+            //}
+            //ext_utils.PrintLine(TABLEWIDTH);
+            //PrintRow(TABLEWIDTH, new string[] { "Field", "Type", "Null" });
+
+            //ext_utils.PrintLine(TABLEWIDTH);
+            //PrintRow(TABLEWIDTH, new string[] { "id", "int(11)", "NO" });
+            //PrintRow(TABLEWIDTH, new string[] { "name", "varchar(25)", "NO" });
+            // PrintRow(TABLEWIDTH, new string[] { "age", "int(3)", "NO" });
+            //ext_utils.PrintLine(TABLEWIDTH);
+
+            //Console.ReadKey();
         }
         static void Closing()
         {
@@ -42,7 +61,7 @@ namespace ConsoleApp1
             String answer="";
             string PatternCommand = "(^(add){1}|^(remove){1}|^(show){1})( )?";
             string PatternParameter = "((user){1}|(project){1}|(task){1})( )?";
-            string PatternSubParameter = "($(all)?)";
+            string PatternSubParameter = "(all)( )?";
             Preparing();
             if (db.IsConnected)
             {
@@ -70,6 +89,7 @@ namespace ConsoleApp1
                     MatchCollection mcPrm = rxPrm.Matches(answer);
                     answer = Regex.Replace(answer, PatternParameter, String.Empty);
                     MatchCollection mcSPrm = rxSPrm.Matches(answer);
+                    answer = Regex.Replace(answer, PatternSubParameter, String.Empty);
                     Boolean allFlag = false;
                     if (mcSPrm.Count == 1) allFlag = true;
 
@@ -84,35 +104,38 @@ namespace ConsoleApp1
                                 {
                                     case "user":
                                         User usr = new User();
-                                        _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Value), "Begin? (y/n)"}, 
+                                        _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Groups[1].Value), "Begin? (y/n)"}, 
                                             new char[] { 'Y','N'});
                                         if (_master.Key == 'N') break;
                                         Console.WriteLine(match.Value + " plug");
                                         Console.WriteLine(db.IsConnected?"DB Connected":"DB is NOt connected!!!");
                                         if (db.ExecuteCommand(usr.AddMaster()) == 0)
-                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for adding a {0}", match.Value) });
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for adding a {0}", match.Groups[1].Value) });
                                         else
-                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for adding a {0}", match.Value) });
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for adding a {0}", match.Groups[1].Value) });
                                         break;
-                                    case "Task":
+                                    case "task":
                                         Task tsk = new Task();
-                                        _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Value), "Begin? (y/n)" },
+                                        _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Groups[1].Value), "Begin? (y/n)" },
                                             new char[] { 'Y', 'N' });
                                         if (_master.Key != 'Y') break;
                                         Console.WriteLine(match.Value + " plug");
                                         //tsk.AddMaster();
                                         break;
-                                    case "Project":
+                                    case "project":
                                         Project prj = new Project();
-                                        _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Value), "Begin? (y/n)" },
+                                        _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Groups[1].Value), "Begin? (y/n)" },
                                             new char[] { 'Y', 'N' });
-                                        if (_master.Key != 'Y') break;
+                                        if (_master.Key == 'N') break;
                                         Console.WriteLine(match.Value + " plug");
-                                        //prj.AddMaster();
+                                        Console.WriteLine(db.IsConnected ? "DB Connected" : "DB is NOt connected!!!");
+                                        if (db.ExecuteCommand(prj.AddMaster()) == 0)
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for adding a {0}", match.Groups[1].Value) });
+                                        else
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for adding a {0}", match.Groups[1].Value) });
                                         break;
                                     default:
-                                        _master.WriteMessage(new String[] { "No match for \"Add Param\".", "Error!" });
-                                        _master.WriteMessage(new String[] { "You are about to start a master of adding a user", "Begin? (Y/n)" });
+                                        _master.WriteMessage(new String[] { string.Format(@"No match for ""Add {0}"".", match.Groups[1].Value), "Error!" });
                                         if (_master.Key != 'Y') break;
                                         Closing();
                                         break;
@@ -126,11 +149,11 @@ namespace ConsoleApp1
                                         User usr = new User();
                                         usr.RemoveMaster();
                                         break;
-                                    case "Task":
+                                    case "task":
                                         Task tsk = new Task();
                                         tsk.RemoveMaster();
                                         break;
-                                    case "Project":
+                                    case "project":
                                         Project prj = new Project();
                                         prj.RemoveMaster();
                                         break;
@@ -139,29 +162,49 @@ namespace ConsoleApp1
                                         Closing();
                                         break;
                                 }
-                                break;
+                                break;*/
                             case "show":
                                 match = mcPrm[0];
-                                switch (match.Value)
+                                switch (match.Groups[1].Value)
                                 {
                                     case "user":
                                         User usr = new User();
-                                        usr.ShowMaster(allFlag);
+                                        if (db.ExecuteCommand(usr.ShowMaster(allFlag)) == 0)
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for {0}", match.Groups[1].Value) });
+                                        else
+                                        {
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
+                                            db.printTable(match.Groups[1].Value, "Name", 60);
+                                        }
                                         break;
-                                    case "Task":
+                                        break;
+                                    case "task":
                                         Task tsk = new Task();
-                                        tsk.ShowMaster(allFlag);
+                                        if (db.ExecuteCommand(tsk.ShowMaster(allFlag)) == 0)
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for {0}", match.Groups[1].Value) });
+                                        else
+                                        {
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
+                                            db.printTable(match.Groups[1].Value, "Name", 100);
+                                        }
                                         break;
-                                    case "Project":
+                                    case "project":
                                         Project prj = new Project();
-                                        prj.ShowMaster(allFlag);
+                                        if (db.ExecuteCommand(prj.ShowMaster(allFlag)) == 0)
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for {0}", match.Groups[1].Value) });
+                                        else
+                                        {
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
+                                            db.printTable(match.Groups[1].Value, "Name", 60);
+                                        }
                                         break;
                                     default:
-                                        _master.WriteMessage(new String[] { "No match for \"Remove Param\".", "Error!" });
+                                        _master.WriteMessage(new String[] { string.Format(@"No match for ""Add {0}"".", match.Groups[1].Value), "Error!" });
+                                        if (_master.Key != 'Y') break;
                                         Closing();
                                         break;
                                 }
-                                break;*/
+                                break;
                             default:
                                 _master.WriteMessage(new String[] { "No match for Verb.", "Error!" });
                                 Closing();

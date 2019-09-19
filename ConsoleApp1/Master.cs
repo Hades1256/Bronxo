@@ -9,18 +9,6 @@ namespace ConsoleApp1
     class Master
     {
         public Char Key { get; private set; }
-        private static Int32 GetArrayElementMaxLength(ref String[] a)
-        {
-            Int32 Result = 0;
-            foreach (String str in a)
-            {
-                if (str.Length > Result)
-                {
-                    Result = str.Length;
-                };
-            }
-            return Result;
-        }
         public static Char GetKeyPress(Char[] validChars)
         {
             ConsoleKeyInfo keyPressed;
@@ -41,25 +29,21 @@ namespace ConsoleApp1
         {
             Console.Clear();
             Int32 length = 0;
-            String decorStrStar = "",
-                decorStr = "";
-            length = GetArrayElementMaxLength(ref hint);
-            for (Int32 i = 0; i < length + 4; i++)
-            {
-                decorStrStar += "*";
-            }
-            Console.WriteLine(decorStrStar);
+            //String decorStrStar = "",
+            String decorStr = "";
+            length = ext_utils.GetArrayElementMaxLength(ref hint);
+            ext_utils.PrintLine(length + 4);
             for (int i = 0; i < (hint.Length-1); i++)
             {
-                decorStr = "* " + hint[i];
+                decorStr = "| " + hint[i];
                 if (decorStr.Length < (length + 2))
                 {
                     for (int j = decorStr.Length; j < (length + 2); j++)
                         decorStr += " ";
                 }
-                Console.WriteLine(decorStr + " *");
+                Console.WriteLine(decorStr + " |");
             }
-            Console.WriteLine(decorStrStar);
+            ext_utils.PrintLine(length + 4);
             Console.WriteLine();
             Console.Write(hint[hint.Length-1]);
             Key = Char.ToUpper(GetKeyPress(chars));
@@ -68,28 +52,47 @@ namespace ConsoleApp1
         {
             Console.Clear();
             Int32 length = 0;
-            String decorStrStar = "",
-                decorStr = "";
-            length = GetArrayElementMaxLength(ref hint);
+            //String decorStrStar = "",
+            String decorStr = "";
+            length = ext_utils.GetArrayElementMaxLength(ref hint);
             //ConsoleKeyInfo keyPressed;
-            for (Int32 i = 0; i < length + 4; i++)
-            {
-                decorStrStar += "*";
-            }
-            Console.WriteLine(decorStrStar);
+            ext_utils.PrintLine(length + 4);
             for (int i = 0; i < hint.Length; i++)
             {
-                decorStr = "* " + hint[i];
+                decorStr = "| " + hint[i];
                 if (decorStr.Length<(length+2))
                 {
                     for (int j = decorStr.Length; j < (length+2); j++)
                         decorStr += " ";
                 }
-                Console.WriteLine(decorStr+" *");
+                Console.WriteLine(decorStr+" |");
             }
-            Console.WriteLine(decorStrStar);
+            ext_utils.PrintLine(length + 4);
             ext_utils.Pause();
             Console.Clear();
+        }
+        public void WriteMessage(Boolean ReturnString,String[] hint)
+        {
+            //String Result = "";
+            Console.Clear();
+            Int32 length = 0;
+            String decorStr = "";
+            length = ext_utils.GetArrayElementMaxLength(ref hint);
+            ext_utils.PrintLine(length + 4);
+            for (int i = 0; i < hint.Length; i++)
+            {
+                decorStr = "| " + hint[i];
+                if (decorStr.Length < (length + 2))
+                {
+                    for (int j = decorStr.Length; j < (length + 2); j++)
+                        decorStr += " ";
+                }
+                Console.WriteLine(decorStr + " |");
+            }
+            ext_utils.PrintLine(length + 4);
+            //ext_utils.Pause();
+            Console.Clear();
+            //return Result;
         }
         //Constructor
         public Master()
