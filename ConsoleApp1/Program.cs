@@ -40,8 +40,8 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             String answer="";
-            string PatternCommand = "(^(add){1} |^(remove){1} |^(show){1} )";
-            string PatternParameter = "((user |user){1}|(project |project){1}|(task |task){1})";
+            string PatternCommand = "(^(add){1}|^(remove){1}|^(show){1})( )?";
+            string PatternParameter = "((user){1}|(project){1}|(task){1})( )?";
             string PatternSubParameter = "($(all)?)";
             Preparing();
             if (db.IsConnected)
@@ -49,17 +49,18 @@ namespace ConsoleApp1
                 //Запуск мастера сообщений
                 Master _master = new Master();
                 _master.WriteMessage(new String[] { "Welcome to Bug Tracker", "To work with the system, write command.","List of available commands:",
-                    "Add:    for adding an object to Data Base",
-                    "Remove: for removing an object from Data Base",
-                    "Show: for removing an object from Data Base",
+                    " Add:    for adding an object to Data Base",
+                    " Remove: for removing an object from Data Base",
+                    " Show: for removing an object from Data Base",
                     "List of perameters:",
-                    "User:    for working with User table",
-                    "Project: for working with User table",
-                    "Task:    for working with User table",
+                    " User:    for working with User table",
+                    " Project: for working with User table",
+                    " Task:    for working with User table",
                     "List of sub perameters:",
-                    "All:    for working with User table"});
+                    " All:    for working with User table"});
                 while (answer != "exit")
                 {
+                    Console.WriteLine("Input command:");
                     answer = Console.ReadLine();
                     Regex rxVerb = new Regex(PatternCommand, RegexOptions.Compiled | RegexOptions.IgnoreCase);
                     Regex rxPrm = new Regex(PatternParameter, RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -75,31 +76,49 @@ namespace ConsoleApp1
                     if ((mcVerb.Count == 1) & (mcPrm.Count == 1)&(answer.Length==0))
                     {
                         Match match = mcVerb[0];
-                        switch (match.Value)
+                        switch (match.Groups[1].Value)
                         {
                             case "add":
                                 match = mcPrm[0];
-                                switch (match.Value)
+                                switch (match.Groups[1].Value)
                                 {
                                     case "user":
                                         User usr = new User();
-                                        usr.AddMaster();
+                                        _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Value), "Begin? (y/n)"}, 
+                                            new char[] { 'Y','N'});
+                                        if (_master.Key == 'N') break;
+                                        Console.WriteLine(match.Value + " plug");
+                                        Console.WriteLine(db.IsConnected?"DB Connected":"DB is NOt connected!!!");
+                                        if (db.ExecuteCommand(usr.AddMaster()) == 0)
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for adding a {0}", match.Value) });
+                                        else
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for adding a {0}", match.Value) });
                                         break;
                                     case "Task":
                                         Task tsk = new Task();
-                                        tsk.AddMaster();
+                                        _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Value), "Begin? (y/n)" },
+                                            new char[] { 'Y', 'N' });
+                                        if (_master.Key != 'Y') break;
+                                        Console.WriteLine(match.Value + " plug");
+                                        //tsk.AddMaster();
                                         break;
                                     case "Project":
                                         Project prj = new Project();
-                                        prj.AddMaster();
+                                        _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Value), "Begin? (y/n)" },
+                                            new char[] { 'Y', 'N' });
+                                        if (_master.Key != 'Y') break;
+                                        Console.WriteLine(match.Value + " plug");
+                                        //prj.AddMaster();
                                         break;
                                     default:
                                         _master.WriteMessage(new String[] { "No match for \"Add Param\".", "Error!" });
+                                        _master.WriteMessage(new String[] { "You are about to start a master of adding a user", "Begin? (Y/n)" });
+                                        if (_master.Key != 'Y') break;
                                         Closing();
                                         break;
                                 }
                                 break;
-                            case "remove":
+                            /*case "remove":
                                 match = mcPrm[0];
                                 switch (match.Value)
                                 {
@@ -142,7 +161,7 @@ namespace ConsoleApp1
                                         Closing();
                                         break;
                                 }
-                                break;
+                                break;*/
                             default:
                                 _master.WriteMessage(new String[] { "No match for Verb.", "Error!" });
                                 Closing();

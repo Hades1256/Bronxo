@@ -25,7 +25,7 @@ namespace ConsoleApp1
             dbConnect.Close();
             IsConnected = false;
         }
-        public Boolean CreateDB(string dbFileName)
+        /*public Boolean CreateDB(string dbFileName)
         {
             Boolean Result = false;
             SQLiteConnection.CreateFile(dbFileName);
@@ -35,7 +35,7 @@ namespace ConsoleApp1
                 Connect();
                 sqlCmd.Connection = dbConnect;
 
-                sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS Catalog (id INTEGER PRIMARY KEY AUTOINCREMENT, author TEXT, book TEXT)";
+                //sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS Catalog (id INTEGER PRIMARY KEY AUTOINCREMENT, author TEXT, book TEXT)";
                 //"CREATE TABLE IF NOT EXISTS Users (ID INTEGER PRIMARY KEY ASC AUTOINCREMENT UNIQUE, Access INT(2) DEFAULT(0) NOT NULL, Name STRING(64) NOT NULL UNIQUE ON CONFLICT FAIL)";
                 //"PRAGMA foreign_keys = ON";
 
@@ -49,8 +49,26 @@ namespace ConsoleApp1
                 Console.WriteLine("Error: " + ex.Message);
             }
             return Result;
+        }*/
+        public int ExecuteCommand(String SQLcommand)
+        {
+            int Result = 0;
+            sqlCmd.CommandText = SQLcommand;
+            try
+            {
+                Result = sqlCmd.ExecuteNonQuery();
+            }
+            catch (SQLiteException ex)
+            {
+                if (ex.ErrorCode==19) //ex.Message = "constraint failed\r\nUNIQUE constraint failed: Users.Name"
+                //if (ex.Message.Contains("UNIQUE constraint")) //ex.Message = "constraint failed\r\nUNIQUE constraint failed: Users.Name"
+                {
+                    new Master().WriteMessage(new String[] { "Non unique value inserted" });
+                }
+            }
+            //
+            return Result;
         }
-
         //Конструктор
         public Database(String FileName)
         {
@@ -63,6 +81,7 @@ namespace ConsoleApp1
                 try
                 {
                     Connect();
+                    sqlCmd.Connection = dbConnect;
                 }
                 catch (SQLiteException ex)
                 {

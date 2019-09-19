@@ -10,7 +10,8 @@ namespace ConsoleApp1
     {
         private UInt16 Id;
         private Byte AccessLevel=0;
-
+        public String Name { get; set; }
+        public String SQLstring { get; set; }
         public Rights GetRights()
         {
             Rights Result = 0;
@@ -28,16 +29,39 @@ namespace ConsoleApp1
             }
             return Result;
         }
-
-
-        static void AddUser()
+        public String AddMaster()//
+        // Сводка:
+        //     Возвращает SQL запрос.
+        //
+        // Возврат:
+        //     Строка типа String.
+        {
+            String Result = "";
+            Master _master = new Master();
+            Console.Clear();
+            Console.WriteLine("Write User name to add");
+            Name = Console.ReadLine();
+            _master.WriteMessage(new String[] { "You are about to add a new user to Data Base.", "Continue? (y/n)" },new char[] {'Y'});
+            if (_master.Key == 'Y') Result = SQLAdd();
+            return Result;
+        }
+        public String SQLAdd()
         {
             //SQL запрос
+            String Result = "";
+            Result = String.Format("INSERT INTO Users (Name) VALUES('{0}'); ", Name);
+            return Result;
         }
 
-        static void DeleteUser()
+        static void DeleteUser(String name)
         {
-            //SQL запрос
+            //SQL запрос command.CommandText = String.Format(@"DELETE FROM 'users' WHERE ""Name"" = '{0}'; ",Name);
+
+        }
+        public User()
+        {
+            Name = "";
+            SQLstring = "";
         }
     }
 }

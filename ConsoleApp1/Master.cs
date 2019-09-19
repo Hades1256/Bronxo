@@ -49,7 +49,7 @@ namespace ConsoleApp1
                 decorStrStar += "*";
             }
             Console.WriteLine(decorStrStar);
-            for (int i = 1; i < hint.Length; i++)
+            for (int i = 0; i < (hint.Length-1); i++)
             {
                 decorStr = "* " + hint[i];
                 if (decorStr.Length < (length + 2))
@@ -60,8 +60,8 @@ namespace ConsoleApp1
                 Console.WriteLine(decorStr + " *");
             }
             Console.WriteLine(decorStrStar);
-            Console.WriteLine("");
-            Console.Write(hint[0]);
+            Console.WriteLine();
+            Console.Write(hint[hint.Length-1]);
             Key = Char.ToUpper(GetKeyPress(chars));
         }
         public void WriteMessage(String[] hint)
@@ -71,7 +71,7 @@ namespace ConsoleApp1
             String decorStrStar = "",
                 decorStr = "";
             length = GetArrayElementMaxLength(ref hint);
-            ConsoleKeyInfo keyPressed;
+            //ConsoleKeyInfo keyPressed;
             for (Int32 i = 0; i < length + 4; i++)
             {
                 decorStrStar += "*";
