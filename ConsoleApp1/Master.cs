@@ -71,9 +71,8 @@ namespace ConsoleApp1
             ext_utils.Pause();
             Console.Clear();
         }
-        public void WriteMessage(Boolean ReturnString,String[] hint)
+        public void WriteMessage(Boolean NoString,String[] hint)
         {
-            //String Result = "";
             Console.Clear();
             Int32 length = 0;
             String decorStr = "";
@@ -90,9 +89,7 @@ namespace ConsoleApp1
                 Console.WriteLine(decorStr + " |");
             }
             ext_utils.PrintLine(length + 4);
-            //ext_utils.Pause();
-            Console.Clear();
-            //return Result;
+            //Console.Clear();
         }
         //Constructor
         public Master()

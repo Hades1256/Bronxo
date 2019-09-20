@@ -41,8 +41,19 @@ namespace ConsoleApp1
             Console.Clear();
             Console.WriteLine("Write User name to add");
             Name = Console.ReadLine();
-            _master.WriteMessage(new String[] { "You are about to add a new user to Data Base.", "Continue? (y/n)" },new char[] {'Y'});
+            _master.WriteMessage(new String[] { "You are about to add a new user to Data Base.", "Continue? (y/n)" },new char[] { 'Y', 'N' });
             if (_master.Key == 'Y') Result = SQLAdd();
+            return Result;
+        }
+        public String RemoveMaster()//
+        {
+            String Result = "";
+            Master _master = new Master();
+            Console.Clear();
+            Console.WriteLine("Write User name to remove");
+            Name = Console.ReadLine();
+            _master.WriteMessage(new String[] { "WARNING!", "You are about to remove user from Data Base.", "Continue? (y/n)" }, new char[] { 'Y', 'N' });
+            if (_master.Key == 'Y') Result = SQLRemove();
             return Result;
         }
         public String ShowMaster(Boolean allFlag)//
@@ -73,6 +84,13 @@ namespace ConsoleApp1
             //SQL запрос
             String Result = "";
             Result = String.Format("INSERT INTO Users (Name) VALUES('{0}'); ", Name);
+            return Result;
+        }
+        public String SQLRemove()
+        {
+            //SQL запрос
+            String Result = "";
+            Result = String.Format("Delete FROM Users WHERE Name = '{0}'; ", Name);
             return Result;
         }
         public static String SQLShow(Boolean AllFlag)

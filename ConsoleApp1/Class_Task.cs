@@ -8,14 +8,47 @@ namespace ConsoleApp1
 {
     class Task
     {
-        private UInt32 ID;
-        private UInt32 ProjectID;
-        private String Type;
+        private UInt32 ID=0;
+        public UInt32 ProjectID { get; set; }
+        public UInt32 UserID { get; set; }
+        private String Type="";
         private String Priority;
-        private String Creator;
-        private String Name;
-        private String Description;
+        private String Name="";
+        private String Descr="";
 
+        public String RemoveMaster()//
+        {
+            String Result = "";
+            Master _master = new Master();
+            Console.Clear();
+            Console.WriteLine("Write Task name to remove");
+            Name = Console.ReadLine();
+            _master.WriteMessage(new String[] { "WARNING!", "You are about to remove task from Data Base.", "Continue? (y/n)" }, new char[] { 'Y', 'N' });
+            if (_master.Key == 'Y') Result = SQLRemove();
+            return Result;
+        }
+        public String AddMaster()//
+        // Сводка:
+        //     Возвращает SQL запрос.
+        //
+        // Возврат:
+        //     Строка типа String.
+        {
+            String Result = "";
+            Master _master = new Master();
+            Console.Clear();
+            Console.WriteLine("Write Task theme to add");
+            Name = Console.ReadLine();
+            Console.WriteLine("Write Task Description with name: {0}", Name);
+            Descr = Console.ReadLine();
+            Console.WriteLine("Write Task Type with name: {0}", Name);
+            Type = Console.ReadLine();
+            Console.WriteLine("Write Task Priority with name: {0}", Name);
+            Priority = Console.ReadLine();
+            _master.WriteMessage(new String[] { "You are about to add a new task to Data Base:", String.Format("| {0} | {1} | {2} | {3}", Name, Descr, Type, Priority ), "Continue? (y/n)" }, new char[] { 'Y', 'N' });
+            if (_master.Key == 'Y') Result = SQLAdd();
+            return Result;
+        }
         public String ShowMaster(Boolean allFlag)//
         // Сводка:
         //     Возвращает SQL запрос.
@@ -34,23 +67,33 @@ namespace ConsoleApp1
                 Console.Clear();
                 Console.WriteLine("Write Task name to show");
                 Name = Console.ReadLine();
-                _master.WriteMessage(new String[] { String.Format("You are about to show a user: {0} from Data Base.", Name), "Continue? (y/n)" }, new char[] { 'Y' });
+                _master.WriteMessage(new String[] { String.Format("You are about to show a user: {0} from Data Base.", Name), "Continue? (y/n)" }, new char[] { 'Y', 'N' });
                 if (_master.Key == 'Y') Result = SQLShow(Name);
             }
             return Result;
         }
-        static void SQLAdd()
+        private String SQLAdd()
         {
             //SQL запрос
+            String Result = "";
+            Result = String.Format("INSERT INTO Tasks (Name, Description) VALUES('{0}','{1}'); ", Name, Descr);
+            return Result;
         }
-        public static String SQLShow(Boolean AllFlag)
+        private String SQLRemove()
+        {
+            //SQL запрос
+            String Result = "";
+            Result = String.Format("Delete FROM Tasks WHERE Theme = '{0}'; ", Name);
+            return Result;
+        }
+        private static String SQLShow(Boolean AllFlag)
         {
             //SQL запрос
             String Result = "";
             Result = @"SELECT * FROM 'Tasks.View'; ";
             return Result;
         }
-        public static String SQLShow(String val)
+        private static String SQLShow(String val)
         {
             //SQL запрос
             String Result = "";

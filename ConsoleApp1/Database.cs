@@ -63,29 +63,30 @@ namespace ConsoleApp1
         {
             int Result = 0;
             dbCmd.CommandText = SQLcommand;
-            try
-            {
-                Result = dbCmd.ExecuteNonQuery();
-            }
-            catch (SQLiteException ex)
-            {
-
-                switch (ex.ErrorCode)
+            if (SQLcommand!="")
+                try
                 {
-                    //case 1:                 //Message = "SQL logic error\r\ntable Projects has no column named Descr" ex.ErrorCode==1 ;Message = "SQL logic error\r\nnear \")\": syntax error"
-                    //break;
-                    case 19:                //Message = "constraint failed\r\nUNIQUE constraint failed: Users.Name" ex.ErrorCode==19
-                        new Master().WriteMessage(new String[] { "Non unique value inserted" });
-                        break;
-                    default:
-                        new Master().WriteMessage(new String[] { ex.Message });
-                        break;
+                    Result = dbCmd.ExecuteNonQuery();
                 }
-                if (ex.ErrorCode == 19)
+                catch (SQLiteException ex)
                 {
 
+                    switch (ex.ErrorCode)
+                    {
+                        //case 1:                 //Message = "SQL logic error\r\ntable Projects has no column named Descr" ex.ErrorCode==1 ;Message = "SQL logic error\r\nnear \")\": syntax error"
+                        //break;
+                        /*case 19:                //Message = "constraint failed\r\nUNIQUE constraint failed: Users.Name" ex.ErrorCode==19
+                            new Master().WriteMessage(new String[] { "Non unique value inserted" });
+                            break;*/
+                        default:
+                            new Master().WriteMessage(new String[] { "Error.", "Error code: " + (ex.ErrorCode).ToString(), ex.Message });
+                            break;
+                    }
+                    if (ex.ErrorCode == 19)
+                    {
+
+                    }
                 }
-            }
             //
             return Result;
         }
@@ -96,7 +97,7 @@ namespace ConsoleApp1
             Result = Console.ReadLine();
             return Result;
         }
-        public void printTable(String tblname, String colname, int TABLEWIDTH)
+        public void printTable(int TABLEWIDTH)
         {
 
             using (SQLiteDataReader dr = dbCmd.ExecuteReader())
@@ -104,6 +105,7 @@ namespace ConsoleApp1
                 if (dr.HasRows)
                 {
                     String[] row = new String[dr.FieldCount];
+                    ext_utils.PrintLine(TABLEWIDTH);
                     //чтение заголовка таблицы(имена столбцов)}
                     for (Int32 i = 0; i < dr.FieldCount; i++)
                     {
@@ -120,6 +122,7 @@ namespace ConsoleApp1
                         ext_utils.PrintRow(TABLEWIDTH, row);
                         RowCounter++;
                     }
+                    ext_utils.PrintLine(TABLEWIDTH);
                     Console.WriteLine("Number of found rows: {0}", RowCounter);
                 }
                 else
@@ -134,7 +137,7 @@ namespace ConsoleApp1
             IsConnected = false;
             dbConnect = new SQLiteConnection();
             dbCmd = new SQLiteCommand();
-            dbConnect.ConnectionString = "Data Source = " + FileName + "; Version = 3; FailIfMissing=True; Journal Mode=Persist;";
+            dbConnect.ConnectionString = "Data Source = " + FileName + "; Version = 3; foreign keys=true; FailIfMissing=True; Journal Mode=Persist;";
             if (File.Exists(FileName))
             {
                 try

@@ -30,24 +30,27 @@ namespace ConsoleApp1
                 ext_utils.Closeapp();
             }
         }
-        static void printTable(String tblname, Boolean allFlag, int TABLEWIDTH)
+        static void FillingTask(ref Task tsk, ref Master _master)
         {
-            //if (allFlag)
-            //{
-            //    User usr = new User();
-            //    usr.ShowMaster();
-            //    SQLite db.ExecuteReader;
-            //}
-            //ext_utils.PrintLine(TABLEWIDTH);
-            //PrintRow(TABLEWIDTH, new string[] { "Field", "Type", "Null" });
+            _master.WriteMessage(true, new String[] { "", "", "" });
+            tsk.ProjectID=0;
+            do
+            {
+                _master.WriteMessage(true, new String[] { "Write ID of chosen Project" });
+                db.ExecuteCommand(new Project().ShowMaster(true));
+                db.printTable(40);
+                if (Int32.TryParse(Console.ReadLine(), out int j))
+                    tsk.UserID = (uint)j;
+                else
+                    break;
 
-            //ext_utils.PrintLine(TABLEWIDTH);
-            //PrintRow(TABLEWIDTH, new string[] { "id", "int(11)", "NO" });
-            //PrintRow(TABLEWIDTH, new string[] { "name", "varchar(25)", "NO" });
-            // PrintRow(TABLEWIDTH, new string[] { "age", "int(3)", "NO" });
-            //ext_utils.PrintLine(TABLEWIDTH);
-
-            //Console.ReadKey();
+                break;
+            }
+            while (true);
+            
+            
+            //db.ExecuteCommand();
+            //db.printTable()
         }
         static void Closing()
         {
@@ -118,9 +121,14 @@ namespace ConsoleApp1
                                         Task tsk = new Task();
                                         _master.WriteMessage(new String[] { String.Format("You are about to start a master of adding a {0}", match.Groups[1].Value), "Begin? (y/n)" },
                                             new char[] { 'Y', 'N' });
-                                        if (_master.Key != 'Y') break;
+                                        if (_master.Key == 'N') break;
                                         Console.WriteLine(match.Value + " plug");
-                                        //tsk.AddMaster();
+                                        Console.WriteLine(db.IsConnected ? "DB Connected" : "DB is NOt connected!!!");
+                                        FillingTask(ref tsk, ref _master);
+                                        if (db.ExecuteCommand(tsk.AddMaster()) == 0)
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for adding a {0}", match.Groups[1].Value) });
+                                        else
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for adding a {0}", match.Groups[1].Value) });
                                         break;
                                     case "project":
                                         Project prj = new Project();
@@ -141,28 +149,43 @@ namespace ConsoleApp1
                                         break;
                                 }
                                 break;
-                            /*case "remove":
+                            case "remove":
                                 match = mcPrm[0];
                                 switch (match.Value)
                                 {
                                     case "user":
                                         User usr = new User();
-                                        usr.RemoveMaster();
+                                        if (db.ExecuteCommand(usr.RemoveMaster()) == 0)
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for {0}", match.Groups[1].Value) });
+                                        else
+                                        {
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
+                                        }
                                         break;
                                     case "task":
                                         Task tsk = new Task();
-                                        tsk.RemoveMaster();
+                                        if (db.ExecuteCommand(tsk.RemoveMaster()) == 0)
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for {0}", match.Groups[1].Value) });
+                                        else
+                                        {
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
+                                        }
                                         break;
                                     case "project":
                                         Project prj = new Project();
-                                        prj.RemoveMaster();
+                                        if (db.ExecuteCommand(prj.RemoveMaster()) == 0)
+                                            _master.WriteMessage(new String[] { String.Format("No successful queries executed for {0}", match.Groups[1].Value) });
+                                        else
+                                        {
+                                            _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
+                                        }
                                         break;
                                     default:
                                         _master.WriteMessage(new String[] { "No match for \"Remove Param\".", "Error!" });
                                         Closing();
                                         break;
                                 }
-                                break;*/
+                                break;
                             case "show":
                                 match = mcPrm[0];
                                 switch (match.Groups[1].Value)
@@ -174,7 +197,7 @@ namespace ConsoleApp1
                                         else
                                         {
                                             _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
-                                            db.printTable(match.Groups[1].Value, "Name", 60);
+                                            db.printTable(60);
                                         }
                                         break;
                                         break;
@@ -185,7 +208,7 @@ namespace ConsoleApp1
                                         else
                                         {
                                             _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
-                                            db.printTable(match.Groups[1].Value, "Name", 100);
+                                            db.printTable(100);
                                         }
                                         break;
                                     case "project":
@@ -195,7 +218,7 @@ namespace ConsoleApp1
                                         else
                                         {
                                             _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
-                                            db.printTable(match.Groups[1].Value, "Name", 60);
+                                            db.printTable(60);
                                         }
                                         break;
                                     default:
