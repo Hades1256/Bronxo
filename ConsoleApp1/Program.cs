@@ -32,12 +32,23 @@ namespace ConsoleApp1
         }
         static void FillingTask(ref Task tsk, ref Master _master)
         {
-            _master.WriteMessage(true, new String[] { "", "", "" });
-            tsk.ProjectID=0;
             do
             {
                 _master.WriteMessage(true, new String[] { "Write ID of chosen Project" });
                 db.ExecuteCommand(new Project().ShowMaster(true));
+                db.printTable(40);
+                if (Int32.TryParse(Console.ReadLine(), out int j))
+                    tsk.ProjectID = (uint)j;
+                else
+                    break;
+
+                break;
+            }
+            while (true);
+            do
+            {
+                _master.WriteMessage(true, new String[] { "Write ID of chosen User" });
+                db.ExecuteCommand(new User().ShowMaster(true));
                 db.printTable(40);
                 if (Int32.TryParse(Console.ReadLine(), out int j))
                     tsk.UserID = (uint)j;
@@ -199,7 +210,6 @@ namespace ConsoleApp1
                                             _master.WriteMessage(new String[] { String.Format("All queries successfully executed for {0}", match.Groups[1].Value) });
                                             db.printTable(60);
                                         }
-                                        break;
                                         break;
                                     case "task":
                                         Task tsk = new Task();

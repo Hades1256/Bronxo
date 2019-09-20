@@ -8,8 +8,8 @@ namespace ConsoleApp1
 {
     class User
     {
-        private UInt16 Id;
-        private Byte AccessLevel=0;
+        //private UInt16 Id;
+        //private Byte AccessLevel=0;
         public String Name { get; set; }
         public String SQLstring { get; set; }
         /*public Rights GetRights()

@@ -9,10 +9,10 @@ namespace ConsoleApp1
     class Project
     {
         //private String DatabaseName { get; set; }
-        private UInt32 ID { get; set; }
+        //private UInt32 ID { get; set; }
         public String Name { get; set; }
         public String Descr { get; set; }
-        public String SQLstring { get; private set; }
+        //public String SQLstring { get; private set; }
 
         // Сводка:
         //     Возвращает SQL запрос.
@@ -97,9 +97,9 @@ namespace ConsoleApp1
         //Конструктор
         public Project()
         {
-            ID = 0;
+            //ID = 0;
             Name = "";
-            SQLstring = "";
+            //SQLstring = "";
             //DatabaseName = DbName;
         }
     }

@@ -8,7 +8,7 @@ namespace ConsoleApp1
 {
     class Task
     {
-        private UInt32 ID=0;
+        //private UInt32 ID=0;
         public UInt32 ProjectID { get; set; }
         public UInt32 UserID { get; set; }
         private String Type="";
@@ -37,13 +37,13 @@ namespace ConsoleApp1
             String Result = "";
             Master _master = new Master();
             Console.Clear();
-            Console.WriteLine("Write Task theme to add");
+            _master.WriteMessage(true, new String[] { "Write Task theme to add"});
             Name = Console.ReadLine();
-            Console.WriteLine("Write Task Description with name: {0}", Name);
+            _master.WriteMessage(true, new String[] { String.Format("Write Task Description with name: {0}", Name )});
             Descr = Console.ReadLine();
-            Console.WriteLine("Write Task Type with name: {0}", Name);
+            _master.WriteMessage(true, new String[] { String.Format("Write Task Type with name: {0}", Name )});
             Type = Console.ReadLine();
-            Console.WriteLine("Write Task Priority with name: {0}", Name);
+            _master.WriteMessage(true, new String[] { String.Format("Write Task Priority with name: {0}", Name )});
             Priority = Console.ReadLine();
             _master.WriteMessage(new String[] { "You are about to add a new task to Data Base:", String.Format("| {0} | {1} | {2} | {3}", Name, Descr, Type, Priority ), "Continue? (y/n)" }, new char[] { 'Y', 'N' });
             if (_master.Key == 'Y') Result = SQLAdd();
@@ -76,7 +76,8 @@ namespace ConsoleApp1
         {
             //SQL запрос
             String Result = "";
-            Result = String.Format("INSERT INTO Tasks (Name, Description) VALUES('{0}','{1}'); ", Name, Descr);
+            Result = String.Format("INSERT INTO Tasks (ProjectID, Theme, Type, Priority, UserID, Description) VALUES('{0}','{1}','{2}','{3}','{4}','{5}'); ",
+                ProjectID, Name, Type, Priority, UserID, Descr);
             return Result;
         }
         private String SQLRemove()
